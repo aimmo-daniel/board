@@ -2,6 +2,7 @@ from flask import request, jsonify
 from flask_classful import FlaskView, route
 
 from app.service import memberService
+from app.utils import auth_required
 
 
 class MemberView(FlaskView):
@@ -21,6 +22,7 @@ class MemberView(FlaskView):
         return jsonify(message='회원가입이 완료되었습니다.'), 200
 
     @route('/<member_id>', methods=['DELETE'])
+    @auth_required
     def withdrawal(self, member_id):
         memberService.memberWithdrawal(member_id)
         return jsonify(message='회원탈퇴가 정상처리 되었습니다.'), 200

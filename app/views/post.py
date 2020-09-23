@@ -2,25 +2,42 @@ from flask import request, jsonify
 from flask_classful import FlaskView, route
 
 from app.service import postService
+from app.utils import auth_required
 
 
 class PostView(FlaskView):
     @route('/<post_id>', methods=['GET'])
-    def detail(self, post_id, page=1):
-        post_detail = postService.postDetail(post_id, page)
-        return jsonify(post_detail), 200
+    @auth_required
+    def detail(self, board_id, post_id, page=1):
+        post_detail = postService.postDetail(board_id, post_id, page)
+        return post_detail
 
     @route('', methods=['POST'])
+    @auth_required
     def create(self, board_id):
         postService.writePost(board_id, request.data)
         return jsonify(message='게시글이 작성되었습니다.'), 200
 
     @route('/<post_id>', methods=['PUT'])
-    def edit(self, post_id):
-        postService.editPost(post_id, request.data)
+    @auth_required
+    def edit(self, board_id, post_id):
+        postService.editPost(board_id, post_id, request.data)
         return jsonify(message='게시판 이름이 변경되었습니다.'), 200
 
     @route('/<post_id>', methods=['DELETE'])
-    def delete(self, post_id):
-        postService.deletePost(post_id)
+    @auth_required
+    def delete(self, board_id, post_id):
+        postService.deletePost(board_id, post_id)
         return jsonify(message='게시판이 삭제되었습니다.'), 200
+
+    @route('/<post_id>/like', methods=['PUT'])
+    @auth_required
+    def like(self, board_id, post_id):
+        postService.like(board_id, post_id)
+        return jsonify(message='좋아요를 눌렀습니다.'), 200
+
+    @route('/<post_id>/unlike', methods=['PUT'])
+    @auth_required
+    def like(self, board_id, post_id):
+        postService.unlike(board_id, post_id)
+        return jsonify(message='좋아요를 취소했습니다.'), 200

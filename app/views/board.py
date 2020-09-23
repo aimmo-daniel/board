@@ -2,6 +2,7 @@ from flask import jsonify, request
 from flask_classful import FlaskView, route
 
 from app.service import boardService
+from app.utils import auth_required
 
 
 class BoardView(FlaskView):
@@ -11,9 +12,10 @@ class BoardView(FlaskView):
         return jsonify(board_list), 200
 
     @route('/<board_id>', methods=['GET'])
-    def detail(self, board_id, page=1):
-        board_detail = boardService.boardDetail(board_id, page)
-        return jsonify(board_detail), 200
+    @auth_required
+    def detail(self, board_id):
+        board_detail = boardService.boardDetail(board_id)
+        return board_detail
 
     @route('', methods=['POST'])
     def create(self):
