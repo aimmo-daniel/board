@@ -1,6 +1,6 @@
 import logging
 
-
+# Mongodb 연결 congif 파일
 class Config:
     MONGO_URI = 'mongodb://localhost:27017/board?connect=fals'
     SECRET = 'hiitssecret'

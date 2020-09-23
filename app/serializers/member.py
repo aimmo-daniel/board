@@ -4,6 +4,7 @@ from marshmallow import Schema, fields, post_load
 from app.models.member import Member
 
 
+# 멤버 조회를 위한 스키마
 class MemberSchema(Schema):
     id = fields.String(description='사용자 PK')
     username = fields.Email(description='사용자 계정')
@@ -13,6 +14,7 @@ class MemberSchema(Schema):
     deleted = fields.Boolean(description='삭제 여부')
 
 
+# 회원 가입을 위한 스키마
 class JoinSchema(Schema):
     username = fields.Email(description='사용자 계정')
     password = fields.String(description='비밀번호')

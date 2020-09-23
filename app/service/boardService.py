@@ -5,19 +5,19 @@ from flask import jsonify, current_app
 
 from app.models.board import Board
 from app.models.post import Post
-from app.serializers.board import BoardSchema, BoardDetailSchema
+from app.serializers.board import BoardSchema
 from app.serializers.post import PostSchema
 
 
+# 게시판 목록 조회
 def boardList():
-    # 게시판 목록 조회
     boards = Board.objects(deleted=False)
     result = BoardSchema().dump(boards, many=True)
     return result
 
 
+# 게시판의 게시글 목록 조회
 def boardDetail(board_id):
-    # 게시판의 게시글 목록 조회
     find_board = Board.objects(id=board_id).get()
     board_info = BoardSchema(exclude={'deleted'}).dump(find_board)
 
@@ -34,8 +34,8 @@ def boardDetail(board_id):
     return response
 
 
+# 게시판 생성
 def createBoard(data):
-    # 게시판 생성
     format_data = json.loads(data)
     request_name = format_data['name']
 
@@ -46,8 +46,8 @@ def createBoard(data):
     result.save()
 
 
+# 게시판 이름 수정
 def editName(board_id, data):
-    # 게시판 이름 수정
     format_data = json.loads(data)
     request_name = format_data['name']
 
@@ -58,7 +58,7 @@ def editName(board_id, data):
     find_board.edit_name(request_name)
 
 
+# 게시판 삭제
 def deleteBoard(board_id):
-    # 게시판 삭제
     find_board = Board.objects(id=board_id)
     find_board.soft_delete()

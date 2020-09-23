@@ -27,6 +27,7 @@ def register_error_handlers(blueprint):
 
 def register_api(app):
     name_space = '/api/v1/'
+
     AuthView.register(app, route_base=name_space + 'auth', trailing_slash=False)
     MemberView.register(app, route_base=name_space + 'member', trailing_slash=False)
     BoardView.register(app, route_base=name_space + 'board', trailing_slash=False)

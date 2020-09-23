@@ -7,8 +7,8 @@ from flask import jsonify, current_app
 from app.models.member import Member
 
 
+# 로그인 시간 업데이트 및 인증 토큰발급
 def getToken(data):
-    # 로그인 시간 업데이트 및 인증 토큰발급
     format_data = json.loads(data)
     request_username = format_data['username']
     request_password = format_data['password']
@@ -26,6 +26,6 @@ def getToken(data):
     return token.decode('utf-8')
 
 
+# 로그아웃, 인증 토큰 만료
 def invalidateToken():
-    # 로그아웃, 인증 토큰 만료
     pass

@@ -12,10 +12,3 @@ class BoardSchema(Schema):
     @post_load
     def make_board(self, data, **kwargs):
         return Board(**data)
-
-
-class BoardDetailSchema(Schema):
-    id = fields.String(description='게시판 PK')
-    name = fields.String(description='게시판명')
-    create_time = fields.DateTime(description='게시판 생성일')
-    deleted = fields.Boolean(description='삭제 여부')

@@ -6,6 +6,7 @@ from app.serializers.member import MemberSchema
 from app.serializers.post import PostSchema
 
 
+# 댓글 조회를 위한 스키마
 class CommentSchema(Schema):
     id = fields.String(description='댓글 PK')
     content = fields.String(description='댓글 내용')
@@ -18,16 +19,19 @@ class CommentSchema(Schema):
     post = fields.Nested(PostSchema, description='게시글 정보')
     writer = fields.Nested(MemberSchema, description='댓글 쓴 유저 정보')
 
+    # 좋아요 중복 체크 확인
     def is_clicked(self, obj):
         if str(g.member_id) in obj.likes:
             return True
         else:
             return False
 
+    # 댓글 좋아요수 집계
     def count_likes(self, obj):
         return len(obj.likes)
 
 
+# 댓글 생성을 위한 스키마
 class CommentCreateSchema(Schema):
     post = fields.String(description='post_id')
     writer = fields.String(description='member_id')

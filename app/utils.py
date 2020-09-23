@@ -6,6 +6,7 @@ from flask import current_app, request
 from flask import g, jsonify
 
 
+# 토큰 인증 필요
 def auth_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):

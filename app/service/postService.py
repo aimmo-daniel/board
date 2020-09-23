@@ -9,8 +9,8 @@ from app.serializers.comment import CommentSchema
 from app.serializers.post import PostCreateSchema, PostSchema
 
 
+# 게시글 조회 + 댓글 목록 조회
 def postDetail(board_id, post_id, page):
-    # 게시글 조회 + 댓글 목록 조회
     find_post = Post.objects(id=post_id, board=board_id).get()
     post_info = PostSchema(exclude={'board.deleted', 'board.create_time', 'writer.deleted', 'writer.last_login', 'writer.create_time'}).dump(find_post)
 
@@ -26,8 +26,8 @@ def postDetail(board_id, post_id, page):
     return response
 
 
+# 게시글 작성
 def writePost(board_id, data):
-    # 게시글 작성
     format_data = json.loads(data)
     format_data['board'] = board_id
     format_data['writer'] = str(g.member_id)
@@ -36,8 +36,8 @@ def writePost(board_id, data):
     result.save()
 
 
+# 게시글 수정
 def editPost(board_id, post_id, data):
-    # 게시글 수정
     format_data = json.loads(data)
     request_title = format_data['title']
     request_content = format_data['content']
@@ -46,22 +46,22 @@ def editPost(board_id, post_id, data):
     find_post.edit_post(request_title, request_content)
 
 
+# 게시글 삭제
 def deletePost(board_id, post_id):
-    # 게시글 삭제
     find_post = Post.objects(id=post_id, board=board_id).get()
     find_post.soft_delete()
 
 
+# 게시글 좋아요
 def like(board_id, post_id):
-    # 게시글 좋아요
     find_post = Post.objects(id=post_id, board=board_id).get()
     member_id = str(g.member_id)
 
     find_post.like(member_id)
 
 
+# 게시글 좋아요 취소
 def unlike(board_id, post_id):
-    # 게시글 좋아요 취소
     find_post = Post.objects(id=post_id, board=board_id).get()
     member_id = str(g.member_id)
 
