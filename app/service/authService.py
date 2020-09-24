@@ -17,10 +17,10 @@ def getToken(data):
 
     if find_member is None:
         return jsonify(message='없는 아이디 입니다.'), 422
-    if not find_member.check_password(request_password):
+    if not find_member.checkPassword(request_password):
         return jsonify(message='비밀번호가 틀렸습니다.'), 422
 
-    find_member.update_last_login()
+    find_member.updateLastLogin()
 
     token = jwt.encode({"member_id": dumps(find_member.id)}, current_app.config['SECRET'], current_app.config['ALGORITHM'])
     return token.decode('utf-8')

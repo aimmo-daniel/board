@@ -1,6 +1,7 @@
 import json
 
 from flask import g
+from marshmallow import ValidationError
 
 from app.models.comment import Comment
 from app.serializers.comment import CommentCreateSchema
@@ -12,7 +13,11 @@ def createComment(post_id, data):
     format_data['post'] = post_id
     format_data['writer'] = str(g.member_id)
 
-    result = CommentCreateSchema().load(format_data)
+    try:
+        result = CommentCreateSchema().load(format_data)
+    except ValidationError as err:
+        return err
+
     result.save()
 
 
@@ -20,13 +25,13 @@ def createComment(post_id, data):
 def editComment(post_id, comment_id, data):
     content = json.loads(data)['content']
     find_comment = Comment.objects(post_id=post_id, id=comment_id).get()
-    find_comment.edit_comment(content)
+    find_comment.editComment(content)
 
 
 # 댓글 삭제
 def deleteComment(post_id, comment_id):
     find_comment = Comment.objects(post_id=post_id, id=comment_id).get()
-    find_comment.soft_delete()
+    find_comment.softDelete()
 
 
 # 댓글 좋아요

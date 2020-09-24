@@ -2,6 +2,7 @@ import json
 from collections import OrderedDict
 
 from flask import jsonify, current_app
+from marshmallow import ValidationError
 
 from app.models.board import Board
 from app.models.post import Post
@@ -21,7 +22,7 @@ def boardDetail(board_id):
     find_board = Board.objects(id=board_id).get()
     board_info = BoardSchema(exclude={'deleted'}).dump(find_board)
 
-    find_post_list = Post.objects(board=board_id, deleted=False).order_by('+create_time', '-like_count')
+    find_post_list = Post.objects(board=board_id, deleted=False).order_by('+type')
     post_list = PostSchema(exclude={'board', 'deleted', 'writer.deleted', 'writer.create_time', 'writer.last_login'}).dump(find_post_list, many=True)
 
     result = OrderedDict()
@@ -41,8 +42,11 @@ def createBoard(data):
 
     if Board.objects(name=request_name):
         return jsonify(message='이미 존재하는 게시판 이름입니다.'), 409
+    try:
+        result = BoardSchema().load(format_data)
+    except ValidationError as err:
+        return err
 
-    result = BoardSchema().load(format_data)
     result.save()
 
 
@@ -55,10 +59,10 @@ def editName(board_id, data):
         return jsonify(message='이미 존재하는 게시판 이름입니다.'), 409
 
     find_board = Board.objects(id=board_id)
-    find_board.edit_name(request_name)
+    find_board.editName(request_name)
 
 
 # 게시판 삭제
 def deleteBoard(board_id):
     find_board = Board.objects(id=board_id)
-    find_board.soft_delete()
+    find_board.softDelete()

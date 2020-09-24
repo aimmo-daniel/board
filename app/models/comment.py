@@ -29,13 +29,13 @@ class Comment(Document):
             self.save()
 
     # 댓글 수정
-    def edit_comment(self, content):
+    def editComment(self, content):
         self.content = content
         self.modified_time = datetime.utcnow().strftime('%B %d %Y - %H:%M:%S')
         self.save()
 
     # 댓글 삭제
-    def soft_delete(self):
+    def softDelete(self):
         self.deleted = True
         self.deleted_time = datetime.utcnow().strftime('%B %d %Y - %H:%M:%S')
         self.save()

@@ -10,5 +10,5 @@ class BoardSchema(Schema):
     deleted = fields.Boolean(description='삭제 여부')
 
     @post_load
-    def make_board(self, data, **kwargs):
+    def makeBoard(self, data, **kwargs):
         return Board(**data)

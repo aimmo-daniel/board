@@ -1,6 +1,7 @@
 import json
 
 from flask import jsonify
+from marshmallow import ValidationError
 
 from app.models.member import Member
 from app.serializers.member import JoinSchema, MemberSchema
@@ -28,11 +29,15 @@ def memberJoin(data):
     if Member.objects(username=request_username):
         return jsonify(message='이미 가입된 아이디 입니다.'), 409
 
-    result = JoinSchema().load(format_data)
+    try:
+        result = JoinSchema().load(format_data)
+    except ValidationError as err:
+        return err
+
     result.save()
 
 
 # 회원탈퇴 서비스
 def memberWithdrawal(member_id):
     find_member = Member.objects(id=member_id)
-    find_member.soft_delete()
+    find_member.softDelete()

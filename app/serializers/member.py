@@ -17,11 +17,11 @@ class MemberSchema(Schema):
 # 회원 가입을 위한 스키마
 class JoinSchema(Schema):
     username = fields.Email(description='사용자 계정')
-    password = fields.String(description='비밀번호')
+    password = fields.String(load_only=True, description='비밀번호')
     name = fields.String(description='사용자 이름')
 
     @post_load
-    def make_member(self, data, **kwargs):
+    def makeMember(self, data, **kwargs):
         password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         data['password'] = password
         return Member(**data)

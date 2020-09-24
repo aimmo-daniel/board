@@ -37,6 +37,6 @@ class CommentView(FlaskView):
     # 댓글 좋아요 취소
     @route('/<comment_id>/unlike', methods=['PUT'])
     @auth_required
-    def like(self, board_id, post_id, comment_id):
+    def unlike(self, board_id, post_id, comment_id):
         commentService.unlike(post_id, comment_id)
         return jsonify(message='좋아요를 취소했습니다.'), 200
