@@ -39,5 +39,5 @@ def memberJoin(data):
 
 # 회원탈퇴 서비스
 def memberWithdrawal(member_id):
-    find_member = Member.objects(id=member_id)
+    find_member = Member.objects(id=member_id).get()
     find_member.softDelete()

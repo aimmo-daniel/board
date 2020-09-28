@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from mongoengine import Document, StringField, DateTimeField, BooleanField, ReferenceField, IntField, ListField
+from mongoengine import Document, StringField, DateTimeField, BooleanField, ReferenceField, ListField
 
 from app.models.member import Member
 from app.models.post import Post

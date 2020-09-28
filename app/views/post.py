@@ -9,8 +9,8 @@ class PostView(FlaskView):
     # 게시글 조회(+댓글 목록)
     @route('/<post_id>', methods=['GET'])
     @auth_required
-    def detail(self, board_id, post_id, page=1):
-        post_detail = postService.postDetail(board_id, post_id, page)
+    def detail(self, board_id, post_id):
+        post_detail = postService.postDetail(board_id, post_id)
         return post_detail
 
     # 게시글 쓰기

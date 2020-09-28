@@ -11,13 +11,13 @@ from app.serializers.post import PostCreateSchema, PostSchema
 
 
 # 게시글 조회 + 댓글 목록 조회
-def postDetail(board_id, post_id, page):
+def postDetail(board_id, post_id):
     find_post = Post.objects(id=post_id, board=board_id).get()
     find_post.increaseViewCount()
-    post_info = PostSchema(exclude={'board.deleted', 'board.create_time', 'writer.deleted', 'writer.last_login', 'writer.create_time'}).dump(find_post)
+    post_info = PostSchema(exclude={'deleted', 'deleted_time', 'board.deleted', 'board.create_time', 'writer.deleted', 'writer.deleted_time', 'writer.last_login', 'writer.create_time'}).dump(find_post)
 
     find_comment_list = Comment.objects(post=post_id, deleted=False).order_by('+create_time', '-like_count')
-    comment_list = CommentSchema(exclude={'post', 'deleted', 'writer.create_time', 'writer.deleted', 'writer.last_login'}).dump(find_comment_list, many=True)
+    comment_list = CommentSchema(exclude={'deleted_time', 'post', 'deleted', 'writer.create_time', 'writer.deleted', 'writer.last_login', 'writer.deleted_time'}).dump(find_comment_list, many=True)
 
     result = OrderedDict()
     result['post'] = post_info

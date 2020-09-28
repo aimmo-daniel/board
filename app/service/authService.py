@@ -26,6 +26,6 @@ def getToken(data):
     return token.decode('utf-8')
 
 
-# 로그아웃, 인증 토큰 만료
+# TODO: 로그아웃, 인증 토큰 만료
 def invalidateToken():
     pass

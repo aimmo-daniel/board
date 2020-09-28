@@ -10,7 +10,7 @@ from app.serializers.post import PostSchema
 class CommentSchema(Schema):
     id = fields.String(description='댓글 PK')
     content = fields.String(description='댓글 내용')
-    create_time = fields.Date(description='댓글 생성 시간')
+    create_time = fields.DateTime(description='댓글 생성 시간')
     my_like = fields.Method('isClicked', description='나의 좋아요 상태')
     like_count = fields.Method('countLikes', description='좋아요수')
     modified_time = fields.DateTime(description='댓글 수정 시간')

@@ -21,18 +21,21 @@ class BoardView(FlaskView):
 
     # 게시판 추가
     @route('', methods=['POST'])
+    @auth_required
     def create(self):
         boardService.createBoard(request.data)
         return jsonify(message='게시판이 생성되었습니다.'), 200
 
     # 게시판 이름 수정
     @route('/<board_id>', methods=['PUT'])
+    @auth_required
     def edit(self, board_id):
         boardService.editName(board_id, request.data)
         return jsonify(message='게시판 이름이 변경되었습니다.'), 200
 
     # 게시판 삭제
     @route('/<board_id>', methods=['DELETE'])
+    @auth_required
     def delete(self, board_id):
         boardService.deleteBoard(board_id)
         return jsonify(message='게시판이 삭제되었습니다.'), 200

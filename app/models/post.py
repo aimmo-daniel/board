@@ -1,10 +1,13 @@
 from datetime import datetime
 from enum import Enum
 
+from factory import mongoengine
+from funcy import monkey
 from mongoengine import Document, StringField, DateTimeField, ListField, ReferenceField, IntField, BooleanField
 
 from app.models.board import Board
 from app.models.member import Member
+from app.pagination import Pagination
 
 
 class Category(Enum):
@@ -28,7 +31,7 @@ class Post(Document):
 
     # 좋아요
     def like(self, member_id):
-        if member_id in self.likes:
+        if not member_id in self.likes:
             self.likes.append(member_id)
             self.save()
 
@@ -55,3 +58,6 @@ class Post(Document):
         self.deleted = True
         self.deleted_time = datetime.utcnow().strftime('%B %d %Y - %H:%M:%S')
         self.save()
+
+    def paginate(self, page, per_page):
+        return Pagination(self, page, per_page)

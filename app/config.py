@@ -2,7 +2,7 @@ import logging
 
 # Mongodb 연결 congif 파일
 class Config:
-    MONGO_URI = 'mongodb://localhost:27017/board?connect=fals'
+    MONGO_URI = 'mongodb://localhost:27017/board'
     SECRET = 'hiitssecret'
     ALGORITHM = 'HS256'
     TESTING = False
@@ -12,7 +12,7 @@ class Config:
 
 
 class LocalConfig(Config):
-    MONGO_URI = 'mongodb://localhost:27017/board?connect=false'
+    MONGO_URI = 'mongodb://localhost:27017/board'
     QUERY_LOG = True
 
 
