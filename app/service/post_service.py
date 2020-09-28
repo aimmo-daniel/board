@@ -4,32 +4,33 @@ from collections import OrderedDict
 from flask import g, current_app
 from marshmallow import ValidationError
 
-from app.models.comment import Comment
+from app.models.board import Board
 from app.models.post import Post, Category
-from app.serializers.comment import CommentSchema
+from app.serializers.board import BoardSchema
 from app.serializers.post import PostCreateSchema, PostSchema
 
 
-# 게시글 조회 + 댓글 목록 조회
-def postDetail(board_id, post_id):
-    find_post = Post.objects(id=post_id, board=board_id).get()
-    find_post.increaseViewCount()
-    post_info = PostSchema(exclude={'deleted', 'deleted_time', 'board.deleted', 'board.create_time', 'writer.deleted', 'writer.deleted_time', 'writer.last_login', 'writer.create_time'}).dump(find_post)
+# 게시판 상세정보 + 게시글 목록 조회
+def board_detail(board_id):
+    find_board = Board.objects(id=board_id).get()
+    board_info = BoardSchema(exclude={'deleted'}).dump(find_board)
 
-    find_comment_list = Comment.objects(post=post_id, deleted=False).order_by('+create_time', '-like_count')
-    comment_list = CommentSchema(exclude={'deleted_time', 'post', 'deleted', 'writer.create_time', 'writer.deleted', 'writer.last_login', 'writer.deleted_time'}).dump(find_comment_list, many=True)
+    find_post_list = Post.objects(board=board_id, deleted=False).order_by('-type') #공지사항이 위로
+
+    post_list = PostSchema(exclude={'board', 'deleted', 'deleted_time', 'writer.deleted', 'writer.create_time', 'writer.last_login'}).dump(find_post_list, many=True)
 
     result = OrderedDict()
-    result['post'] = post_info
-    result['comment_list'] = comment_list
+    result['board'] = board_info
+    result['post_list'] = post_list
 
     # Json 변환시에도 OrderDict 순서 보장
     response = current_app.response_class(json.dumps(result, sort_keys=False), mimetype=current_app.config['JSONIFY_MIMETYPE'])
+
     return response
 
 
 # 게시글 작성
-def writePost(board_id, data):
+def create_post(board_id, data):
     format_data = json.loads(data)
     format_data['board'] = board_id
     format_data['writer'] = str(g.member_id)
@@ -51,7 +52,7 @@ def writePost(board_id, data):
 
 
 # 게시글 수정
-def editPost(board_id, post_id, data):
+def edit_post(board_id, post_id, data):
     format_data = json.loads(data)
     request_title = format_data['title']
     request_content = format_data['content']
@@ -65,17 +66,17 @@ def editPost(board_id, post_id, data):
         format_data['type'] = Category.general
 
     find_post = Post.objects(id=post_id).get()
-    find_post.editPost(request_title, request_content)
+    find_post.edit_post(request_title, request_content)
 
 
 # 게시글 삭제
-def deletePost(board_id, post_id):
+def delete_post(board_id, post_id):
     find_post = Post.objects(id=post_id, board=board_id).get()
-    find_post.softDelete()
+    find_post.soft_delete()
 
 
 # 게시글 좋아요
-def like(board_id, post_id):
+def like_post(board_id, post_id):
     find_post = Post.objects(id=post_id, board=board_id).get()
     member_id = str(g.member_id)
 
@@ -83,7 +84,7 @@ def like(board_id, post_id):
 
 
 # 게시글 좋아요 취소
-def unlike(board_id, post_id):
+def unlike_post(board_id, post_id):
     find_post = Post.objects(id=post_id, board=board_id).get()
     member_id = str(g.member_id)
 

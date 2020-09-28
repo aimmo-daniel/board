@@ -10,9 +10,9 @@ from app.serializers.post import PostSchema
 class CommentSchema(Schema):
     id = fields.String(description='댓글 PK')
     content = fields.String(description='댓글 내용')
-    create_time = fields.DateTime(description='댓글 생성 시간')
-    my_like = fields.Method('isClicked', description='나의 좋아요 상태')
-    like_count = fields.Method('countLikes', description='좋아요수')
+    created_time = fields.DateTime(description='댓글 생성 시간')
+    my_like = fields.Method('is_clicked', description='나의 좋아요 상태')
+    like_count = fields.Method('total_like_count', description='좋아요수')
     modified_time = fields.DateTime(description='댓글 수정 시간')
     deleted = fields.Boolean(description='댓글 삭제 여부')
     deleted_time = fields.DateTime(description='댓글 삭제 시간')
@@ -20,14 +20,14 @@ class CommentSchema(Schema):
     writer = fields.Nested(MemberSchema, description='댓글 쓴 유저 정보')
 
     # 좋아요 중복 체크 확인
-    def isClicked(self, obj):
+    def is_clicked(self, obj):
         if str(g.member_id) in obj.likes:
             return True
         else:
             return False
 
     # 댓글 좋아요수 집계
-    def countLikes(self, obj):
+    def total_like_count(self, obj):
         return len(obj.likes)
 
 
@@ -38,5 +38,5 @@ class CommentCreateSchema(Schema):
     content = fields.String(description='댓글 내용')
 
     @post_load
-    def makeComment(self, data, **kwargs):
+    def make_comment(self, data, **kwargs):
         return Comment(**data)

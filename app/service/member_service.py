@@ -8,21 +8,21 @@ from app.serializers.member import JoinSchema, MemberSchema
 
 
 # 회원목록 조회 서비스
-def memberList():
+def get_members():
     member_list = Member.objects(deleted=False).order_by('+create_date', '-username')
     result = MemberSchema().dump(member_list, many=True)
     return result
 
 
 # 회원정보 조회 서비스
-def memberDetail(member_id):
+def member_detail(member_id):
     find_member = Member.objects(id=member_id).get()
     result = MemberSchema().dump(find_member)
     return result
 
 
 # 회원가입 서비스
-def memberJoin(data):
+def member_join(data):
     format_data = json.loads(data)
     request_username = format_data['username']
 
@@ -38,6 +38,6 @@ def memberJoin(data):
 
 
 # 회원탈퇴 서비스
-def memberWithdrawal(member_id):
+def member_withdrawal(member_id):
     find_member = Member.objects(id=member_id).get()
-    find_member.softDelete()
+    find_member.soft_delete()

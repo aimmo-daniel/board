@@ -29,9 +29,9 @@ def register_api(app):
     name_space = '/api/v1/'
 
     AuthView.register(app, route_base=name_space + 'auth', trailing_slash=False)
-    MemberView.register(app, route_base=name_space + 'member', trailing_slash=False)
-    BoardView.register(app, route_base=name_space + 'board', trailing_slash=False)
-    PostView.register(app, route_base=name_space + 'board/<board_id>/post', trailing_slash=False)
-    CommentView.register(app, route_base=name_space + 'board/<board_id>/post/<post_id>/comment', trailing_slash=False)
+    MemberView.register(app, route_base=name_space + 'members', trailing_slash=False)
+    BoardView.register(app, route_base=name_space + 'boards', trailing_slash=False)
+    PostView.register(app, route_base=name_space + 'boards/<board_id>/posts', trailing_slash=False)
+    CommentView.register(app, route_base=name_space + 'boards/<board_id>/posts/<post_id>/comments', trailing_slash=False)
 
     register_error_handlers(app)
