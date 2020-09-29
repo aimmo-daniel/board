@@ -6,6 +6,7 @@ from app.models.member import Member
 from app.models.post import Post
 
 
+#댓글 목록 조회
 class Comment(Document):
     post = ReferenceField(Post, required=True, description='게시글 정보(post_id')
     writer = ReferenceField(Member, required=True, description='글쓴이(member_id)')
@@ -15,6 +16,10 @@ class Comment(Document):
     modified_time = DateTimeField(null=True, default=None, description='댓글 수정 시간')
     deleted = BooleanField(default=False, description='댓글 삭제 여부')
     deleted_time = DateTimeField(null=True, default=None, description='댓글 삭제 시간')
+
+    # 작성자가 일치하는지 확인
+    def is_writer(self, member_id):
+        return self.writer.id == member_id
 
     # 좋아요
     def like(self, member_id):

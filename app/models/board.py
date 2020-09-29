@@ -9,11 +9,6 @@ class Board(Document):
     deleted = BooleanField(default=False, description='삭제 여부')
     deleted_time = DateTimeField(null=True, default=None, description='게시판 삭제 시간')
 
-    # 게시판 이름 수정
-    def edit_name(self, name):
-        self.name = name
-        self.save()
-
     # 게시판 삭제
     def soft_delete(self):
         self.deleted = True
