@@ -1,4 +1,7 @@
-from flask import jsonify
+import json
+
+import bcrypt
+from flask import jsonify, request
 from flask_apispec import use_kwargs
 from flask_classful import FlaskView, route
 from mongoengine import ValidationError
@@ -33,16 +36,16 @@ class MemberView(FlaskView):
 
     # 회원 가입 #TODO: 여기 수정해야함
     @route('', methods=['POST'])
-    @use_kwargs(JoinSchema(), locations=('json',))
+    # @use_kwargs(JoinSchema(), locations=('json',))
     def join(self, **kwargs):
-        print()
-
-        if Member.objects(username=kwargs.get('username')):
+        form = JoinSchema().load(json.loads(request.data))
+        if Member.objects(email=form.get('email')):
             return jsonify(message='이미 가입된 아이디 입니다.'), 409
 
         try:
-            result = JoinSchema().load(kwargs)
-            result.save()
+            form['password'] = bcrypt.hashpw(form['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            member = Member(**form)
+            member.save()
         except ValidationError as err:
             return err
 

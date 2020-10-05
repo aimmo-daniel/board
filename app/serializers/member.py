@@ -19,8 +19,8 @@ class JoinSchema(Schema):
     password = fields.String(load_only=True, description='비밀번호')
     name = fields.String(description='사용자 이름')
 
-    @post_load
-    def make_member(self, data, **kwargs):
-        password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        data['password'] = password
-        return Member(**data)
+    # @post_load
+    # def make_member(self, data, **kwargs):
+    #     password = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    #     data['password'] = password
+    #     return Member(**data)
