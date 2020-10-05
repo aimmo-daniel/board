@@ -1,7 +1,7 @@
 from flask import jsonify
 from flask_apispec import use_kwargs
 from flask_classful import FlaskView, route
-from flask_restplus import ValidationError
+from marshmallow import ValidationError
 
 from app.models.board import Board
 from app.serializers.board import BoardCreateSchema, BoardSchema
@@ -33,7 +33,7 @@ class BoardView(FlaskView):
 
     # 게시판 이름 수정
     @route('/<board_id>', methods=['PUT'])
-    @use_kwargs(BoardSchema(only='name', partial=True), locations=('json',))
+    @use_kwargs(BoardSchema(only={'name'}, partial=True), locations=('json',))
     @auth_required
     def edit(self, board_id, **kwargs):
         if Board.objects(name=kwargs.get('name')).exists():

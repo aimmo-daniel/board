@@ -11,8 +11,6 @@ class MemberSchema(Schema):
     name = fields.String(description='사용자 이름')
     created_time = fields.DateTime(description='회원가입일')
     last_login_time = fields.DateTime(description='최근 로그인')
-    deleted = fields.Boolean(description='삭제 여부')
-    deleted_time = fields.DateTime(description='회원 탈퇴 시간')
 
 
 # 회원 가입을 위한 스키마

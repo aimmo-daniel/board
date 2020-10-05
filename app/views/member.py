@@ -1,7 +1,10 @@
-from flask import request, jsonify
+from flask import jsonify
+from flask_apispec import use_kwargs
 from flask_classful import FlaskView, route
+from mongoengine import ValidationError
 
-from app.service import member_service
+from app.models.member import Member
+from app.serializers.member import MemberSchema, JoinSchema
 from app.utils import auth_required
 
 
@@ -9,26 +12,51 @@ class MemberView(FlaskView):
     # 회원 목록 조회
     @route('', methods=['GET'])
     def members(self):
-        member_list = member_service.get_members()
-        return jsonify(member_list), 200
+        try:
+            member_list = Member.objects(deleted=False).order_by('+created_time', '-username')
+            result = MemberSchema().dump(member_list, many=True)
+        except ValidationError as err:
+            return err
+
+        return jsonify(result), 200
 
     # 회원 정보 조회
     @route('/<member_id>', methods=['GET'])
     def detail(self, member_id):
-        member_detail = member_service.member_detail(member_id)
-        return jsonify(member_detail), 200
+        try:
+            find_member = Member.objects(id=member_id).first()
+            result = MemberSchema().dump(find_member)
+        except ValidationError as err:
+            return err
 
-    # 회원 가입
+        return jsonify(result), 200
+
+    # 회원 가입 #TODO: 여기 수정해야함
     @route('', methods=['POST'])
-    def join(self):
-        member_service.member_join(request.data)
+    @use_kwargs(JoinSchema(), locations=('json',))
+    def join(self, **kwargs):
+        print()
+
+        if Member.objects(username=kwargs.get('username')):
+            return jsonify(message='이미 가입된 아이디 입니다.'), 409
+
+        try:
+            result = JoinSchema().load(kwargs)
+            result.save()
+        except ValidationError as err:
+            return err
+
         return jsonify(message='회원가입이 완료되었습니다.'), 200
+
 
     # 회원 탈퇴
     @route('/<member_id>', methods=['DELETE'])
     @auth_required
     def withdrawal(self, member_id):
-        member_service.member_withdrawal(member_id)
+        try:
+            find_member = Member.objects(id=member_id).first()
+            find_member.soft_delete()
+        except ValidationError as err:
+            return err
+
         return jsonify(message='회원탈퇴가 정상처리 되었습니다.'), 200
-
-

@@ -4,7 +4,7 @@ from collections import OrderedDict
 from flask import jsonify, current_app, g
 from flask_apispec import use_kwargs
 from flask_classful import FlaskView, route
-from flask_restplus import ValidationError
+from marshmallow import ValidationError
 
 from app.models.comment import Comment
 from app.models.post import Post
