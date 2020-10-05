@@ -1,13 +1,10 @@
 from datetime import datetime
 from enum import Enum
 
-from factory import mongoengine
-from funcy import monkey
 from mongoengine import Document, StringField, DateTimeField, ListField, ReferenceField, IntField, BooleanField
 
 from app.models.board import Board
 from app.models.member import Member
-from app.pagination import Pagination
 
 
 class Category(Enum):
@@ -47,9 +44,7 @@ class Post(Document):
         self.save()
 
     # 글 수정
-    def edit_post(self, title, content):
-        self.title = title
-        self.content = content
+    def update_post_modified_time(self, title, content):
         self.modified_time = datetime.utcnow().strftime('%B %d %Y - %H:%M:%S')
         self.save()
 

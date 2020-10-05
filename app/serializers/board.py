@@ -17,3 +17,8 @@ class BoardCreateSchema(Schema):
     @post_load
     def make_board(self, data, **kwargs):
         return Board(**data)
+
+
+# 게시판 수정 스키마
+class BoardEditNameSchema(Schema):
+    name = fields.String(description='게시판명')

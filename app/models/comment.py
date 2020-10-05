@@ -33,9 +33,8 @@ class Comment(Document):
             self.likes.remove(member_id)
             self.save()
 
-    # 댓글 수정
-    def edit_comment(self, content):
-        self.content = content
+    # 댓글 수정시간 업데이트
+    def update_comment_modified_time(self, content):
         self.modified_time = datetime.utcnow().strftime('%B %d %Y - %H:%M:%S')
         self.save()
 

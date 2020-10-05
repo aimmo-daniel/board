@@ -50,3 +50,10 @@ class PostCreateSchema(Schema):
     @post_load
     def make_post(self, data, **kwargs):
         return Post(**data)
+
+
+# 게시물 수정을 위한 스키마
+class PostEditSchema(Schema):
+    content = fields.String(description='글 내용')
+    type = fields.Int(description='타입')
+    tag_list = fields.List(fields.String(), description='태그 목록')
