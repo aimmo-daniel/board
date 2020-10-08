@@ -1,7 +1,8 @@
 from datetime import datetime
 
 import bcrypt
-from mongoengine import StringField, Document, EmailField, DateTimeField, BooleanField
+from flask_mongoengine import Document
+from mongoengine import StringField, EmailField, DateTimeField, BooleanField
 
 
 class Member(Document):

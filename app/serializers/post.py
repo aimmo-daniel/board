@@ -1,7 +1,7 @@
 from flask import g
 from marshmallow import Schema, fields, post_load
 
-from app.models.post import Post, Category
+from app.models.post import Post
 from app.serializers.board import BoardSchema
 from app.serializers.member import MemberSchema
 
@@ -15,37 +15,41 @@ class PostSchema(Schema):
     modified_time = fields.DateTime(description='글 수정 시간')
     deleted_time = fields.DateTime(description='글 삭제 시간')
     deleted = fields.Boolean(description='글 삭제 여부')
-    board = fields.Nested(BoardSchema, description='게시판 정보')
     writer = fields.Nested(MemberSchema, description='글쓴이 정보')
     tags = fields.List(fields.String(), description='태그 목록')
-    is_notice = fields.Method('check_post_type', description='공지사항=1, 일반게시물=0')
-    my_like = fields.Method('is_clicked', description='나의 좋아요 상태')
-    like_count = fields.Method('total_like_count', description='좋아요수')
+    like_count = fields.Int(description='좋아요수')
+    dislike_count = fields.Int(description='싫어요수')
     view_count = fields.Int(description='조회수')
 
-    # 좋아요 중복 체크 확인
-    def is_clicked(self, obj):
-        if str(g.member_id) in obj.likes:
-            return True
-        else:
-            return False
 
-    # 좋아요 갯수 집계    
-    def total_like_count(self, obj):
-        return len(obj.likes)
+# 게시글 목록 조회를 위한 스키마
+class SimplePostSchema(Schema):
+    id = fields.String(description='게시물 PK')
+    title = fields.String(description='글 제목')
+    created_time = fields.DateTime(description='글 생성 시간')
+    tags = fields.List(fields.String(), description='태그 목록')
+    like_count = fields.Int(description='좋아요수')
+    dislike_count = fields.Int(description='싫어요수')
+    view_count = fields.Int(description='조회수')
 
-    def check_post_type(self, obj):
-        return obj.type
+
+# 내가쓴 글 목록 조회를 위한 스키마
+class MyPostsSchema(Schema):
+    id = fields.String(description='게시물 PK')
+    title = fields.String(description='글 제목')
+    created_time = fields.DateTime(description='글 생성 시간')
+    board = fields.Nested(BoardSchema, description='게시판 정보')
+    tags = fields.List(fields.String(), description='태그 목록')
+    like_count = fields.Int(description='좋아요수')
+    dislike_count = fields.Int(description='싫어요수')
+    view_count = fields.Int(description='조회수')
 
 
 # 게시물 쓰기를 위한 스키마
 class PostCreateSchema(Schema):
-    board = fields.String(description='board_id')
     title = fields.String(description='글 제목')
     content = fields.String(description='글 내용')
-    type = fields.Int(description='타입')
-    tag_list = fields.List(fields.String(), description='태그 목록')
-    writer = fields.String(description='member_id')
+    tags = fields.List(fields.String(), description='태그 목록')
 
     @post_load
     def make_post(self, data, **kwargs):
@@ -55,5 +59,9 @@ class PostCreateSchema(Schema):
 # 게시물 수정을 위한 스키마
 class PostEditSchema(Schema):
     content = fields.String(description='글 내용')
-    type = fields.Int(description='타입')
-    tag_list = fields.List(fields.String(), description='태그 목록')
+    tags = fields.List(fields.String(), description='태그 목록')
+
+
+class PaginatedPostSchema(Schema):
+    total = fields.Integer()
+    items = fields.Nested(SimplePostSchema, many=True)

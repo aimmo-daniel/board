@@ -1,5 +1,3 @@
-import datetime
-
 import factory
 from factory.mongoengine import MongoEngineFactory
 
@@ -10,8 +8,11 @@ class MemberFactory(MongoEngineFactory):
     class Meta:
         model = Member
 
-    email = factory.Faker('email') # factory_boy -> faker
+    email = factory.Faker('email')
     name = factory.Faker('name')
     password = factory.Faker('password', length=30, special_chars=True, digits=True, upper_case=True, lower_case=True)
-    created_time = factory.LazyAttribute(lambda _: datetime.datetime.utcnow())
-    last_login_time = factory.LazyAttribute(lambda _: datetime.datetime.utcnow())
+    deleted = factory.LazyAttribute(lambda _: False)
+
+
+class WithdrawalMemberFactory(MemberFactory):
+    deleted = factory.LazyAttribute(lambda _: True)

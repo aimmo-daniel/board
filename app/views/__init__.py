@@ -29,6 +29,7 @@ def register_api(app):
     name_space = '/api/v1/'
 
     AuthView.register(app, route_base=name_space + 'auth', trailing_slash=False)
+    #MyPageView.register(app, route_base=name_space + 'mypage', trailing_slash=False)
     MemberView.register(app, route_base=name_space + 'members', trailing_slash=False)
     BoardView.register(app, route_base=name_space + 'boards', trailing_slash=False)
     PostView.register(app, route_base=name_space + 'boards/<board_id>/posts', trailing_slash=False)

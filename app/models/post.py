@@ -1,15 +1,11 @@
 from datetime import datetime
 from enum import Enum
 
-from mongoengine import Document, StringField, DateTimeField, ListField, ReferenceField, IntField, BooleanField
+from flask_mongoengine import Document
+from mongoengine import StringField, DateTimeField, ListField, ReferenceField, IntField, BooleanField, ObjectIdField
 
 from app.models.board import Board
 from app.models.member import Member
-
-
-class Category(Enum):
-    general = 0
-    notice = 1
 
 
 class Post(Document):
@@ -21,22 +17,29 @@ class Post(Document):
     deleted = BooleanField(default=False, description='글 삭제 여부')
     writer = ReferenceField(Member, required=True, description='글쓴이(member_id)')
     board = ReferenceField(Board, required=True, description='게시판(board_id')
-    type = IntField(default=Category.general, description='게시물 타입')
     tags = ListField(StringField(), null=True, default=None, description='태그 목록')
-    likes = ListField(StringField(), description='좋아요 누른 유저 목록')
+    like_count = IntField(default=0, min_value=0, description='좋아요수')
+    dislike_count = IntField(default=0, min_value=0, description='싫어요수')
     view_count = IntField(default=0, min_value=0, description='조회수')
 
-    # 좋아요
-    def like(self, member_id):
-        if not member_id in self.likes:
-            self.likes.append(member_id)
-            self.save()
+    # 좋아요 싫어요 갯수 증가/감소
+    def change_like_dislike_count(self, discribe):
+        if discribe == "좋아요":
+            self.like_count += 1
+        elif discribe == "좋아요취소":
+            self.like_count -= 1
+        elif discribe == '싫어요':
+            self.dislike_count += 1
+        elif discribe == '싫어요취소':
+            self.dislike_count -= 1
+        elif discribe == "좋아요>싫어요":
+            self.like_count -= 1
+            self.dislike_count += 1
+        elif discribe == "싫어요>좋아요":
+            self.dislike_count -= 1
+            self.like_count += 1
 
-    # 좋아요 취소
-    def unlike(self, member_id):
-        if member_id in self.likes:
-            self.likes.remove(member_id)
-            self.save()
+        self.save()
 
     # 조회수 증가
     def increase_view_count(self):

@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from mongoengine import Document, StringField, DateTimeField, BooleanField
+from flask_mongoengine import Document
+from mongoengine import StringField, DateTimeField, BooleanField
 
 
 class Board(Document):
